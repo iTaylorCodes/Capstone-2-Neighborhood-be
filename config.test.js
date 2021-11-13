@@ -8,8 +8,12 @@ describe("config can come from env", function () {
     const config = require("./config");
     expect(config.SECRET_KEY).toEqual("abc");
     expect(config.PORT).toEqual(5000);
-    expect(config.getDatabaseUri()).toEqual("other");
     expect(config.BCRYPT_WORK_FACTOR).toEqual(12);
+    expect(config.getDatabaseUri()).toEqual("other");
+
+    process.env.DATABASE_URL = "postgres://";
+
+    expect(config.getDatabaseUri()).toEqual("postgresql://");
 
     delete process.env.SECRET_KEY;
     delete process.env.PORT;
