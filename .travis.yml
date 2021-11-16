@@ -1,7 +1,12 @@
 language: node_js
 node_js:
-  - "stable"
+  - 14.17
 install:
   - npm install
+services:
+  - postgresql
+before_script:
+  - psql -c 'create database neighborhood_test;' -U postgres
+  - psql neighborhood_test < neighborhood-schema.sql
 script:
   - npm run test:coveralls

@@ -1,3 +1,4 @@
+process.env.NODE_ENV = "test";
 const { UnauthorizedError } = require("../expressError");
 const ensureCorrectUser = require("./auth");
 
