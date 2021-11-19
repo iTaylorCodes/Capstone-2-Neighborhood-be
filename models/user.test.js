@@ -1,3 +1,4 @@
+process.env.NODE_ENV = "test";
 const bcrypt = require("bcrypt");
 
 const {
@@ -238,6 +239,41 @@ describe("favoriteProperty", function () {
   test("not found if no such user", async function () {
     try {
       await User.favoriteProperty("nope", testZpids[0]);
+      fail();
+    } catch (err) {
+      expect(err instanceof NotFoundError).toBeTruthy();
+    }
+  });
+});
+
+/************************************** unFavoriteProperty */
+
+describe("unFavoriteProperty", function () {
+  test("works", async function () {
+    await User.favoriteProperty("testuser", testZpids[1]);
+
+    const firstRes = await db.query(
+      'SELECT property_zpid AS "propertyZpid" FROM favorited_properties WHERE property_zpid=$1',
+      [testZpids[1]]
+    );
+    expect(firstRes.rows).toEqual([
+      {
+        propertyZpid: testZpids[1],
+      },
+    ]);
+
+    await User.unFavoriteProperty("testuser", testZpids[1]);
+
+    const secondRes = await db.query(
+      'SELECT property_zpid AS "propertyZpid" FROM favorited_properties WHERE property_zpid=$1 AND user_id=$2',
+      [testZpids[1], testUserIds[0]]
+    );
+    expect(secondRes.rows.length).toEqual(0);
+  });
+
+  test("not found if no such user", async function () {
+    try {
+      await User.unFavoriteProperty("nope", testZpids[0]);
       fail();
     } catch (err) {
       expect(err instanceof NotFoundError).toBeTruthy();
