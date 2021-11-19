@@ -1,6 +1,50 @@
-process.env.NODE_ENV = "test";
+const jwt = require("jsonwebtoken");
 const { UnauthorizedError } = require("../expressError");
-const ensureCorrectUser = require("./auth");
+const { authenticateJWT, ensureCorrectUser } = require("./auth");
+
+const { SECRET_KEY } = require("../config");
+const testJwt = jwt.sign({ username: "testuser" }, SECRET_KEY);
+const badJwt = jwt.sign({ username: "testuser" }, "wrong");
+
+describe("authenticateJWT", function () {
+  test("works: via header", function () {
+    expect.assertions(2);
+    const req = { headers: { authorization: `Bearer ${testJwt}` } };
+    const res = { locals: {} };
+    const next = function (err) {
+      expect(err).toBeFalsy();
+    };
+    authenticateJWT(req, res, next);
+    expect(res.locals).toEqual({
+      user: {
+        iat: expect.any(Number),
+        username: "testuser",
+      },
+    });
+  });
+
+  test("works: no header", function () {
+    expect.assertions(2);
+    const req = {};
+    const res = { locals: {} };
+    const next = function (err) {
+      expect(err).toBeFalsy();
+    };
+    authenticateJWT(req, res, next);
+    expect(res.locals).toEqual({});
+  });
+
+  test("works: invalid token", function () {
+    expect.assertions(2);
+    const req = { headers: { authorization: `Bearer ${badJwt}` } };
+    const res = { locals: {} };
+    const next = function (err) {
+      expect(err).toBeFalsy();
+    };
+    authenticateJWT(req, res, next);
+    expect(res.locals).toEqual({});
+  });
+});
 
 describe("ensureCorrectUser", function () {
   test("works: same user", function () {
