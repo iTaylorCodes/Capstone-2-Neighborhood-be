@@ -204,6 +204,34 @@ class User {
       [user.id, zpid]
     );
   }
+
+  /** Unfavorite a property.
+   *
+   * - username: user logged in
+   * - zpid: property id
+   *
+   * Returns undefined.
+   */
+
+  static async unFavoriteProperty(username, zpid) {
+    const userRes = await db.query(
+      `SELECT id,
+              username
+       FROM users
+       WHERE username = $1`,
+      [username]
+    );
+    const user = userRes.rows[0];
+
+    if (!user) throw new NotFoundError(`No username: ${username}`);
+
+    await db.query(
+      `DELETE FROM favorited_properties
+       WHERE user_id = $1
+       AND property_zpid = $2`,
+      [user.id, zpid]
+    );
+  }
 }
 
 module.exports = User;

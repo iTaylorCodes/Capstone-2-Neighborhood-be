@@ -66,7 +66,7 @@ router.delete("/:username", ensureCorrectUser, async function (req, res, next) {
   }
 });
 
-/** POST /[username]/[propertyZpid]  { state } => { application }
+/** POST /[username]/[propertyZpid]  { state } => { favorited }
  *
  * Returns { "favorited": propertyZpid }
  *
@@ -81,6 +81,25 @@ router.post(
       const propertyZpid = +req.params.propertyZpid;
       await User.favoriteProperty(req.params.username, propertyZpid);
       return res.json({ favorited: propertyZpid });
+    } catch (err) {
+      return next(err);
+    }
+  }
+);
+
+/** DELETE /[username]/[propertyZpid]  =>  { unFavorited: propertyZpid }
+ *
+ * Authorization required: admin or same-user-as-:username
+ * */
+
+router.delete(
+  "/:username/:propertyZpid",
+  ensureCorrectUser,
+  async function (req, res, next) {
+    try {
+      const propertyZpid = +req.params.propertyZpid;
+      await User.unFavoriteProperty(req.params.username, propertyZpid);
+      return res.json({ unFavorited: propertyZpid });
     } catch (err) {
       return next(err);
     }
