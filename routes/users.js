@@ -12,7 +12,7 @@ const router = new express.Router();
 
 /** GET /[username] => { user }
  *
- * Returns { username, firstName, lastName, favoritedProperties }
+ * Returns { id, username, firstName, lastName, email, favoritedProperties }
  *  where favoritedProperties is [ property_zpid ] for zillow properties
  *
  * Authorization required: same user as :username
