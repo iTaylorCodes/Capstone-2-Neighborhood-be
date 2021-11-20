@@ -82,7 +82,7 @@ Routes accept and return JSON formatted data.
 # Deployment
 
 The backend for Neighborhood is deployed using Heroku.
-You can access it at: https://itaylorcodes-neighborhood-be.herokuapp.com/
+You can access it at: https://neighborhood-be.herokuapp.com/
 
 # Technologies Used
 
